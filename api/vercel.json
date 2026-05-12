@@ -8,21 +8,21 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "index.js"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "https://portal.blly.to",
-      "permanent": true,
+      "src": "/",
       "has": [
         {
           "type": "host",
           "value": "blly.to"
         }
-      ]
+      ],
+      "headers": {
+        "Location": "https://portal.blly.to"
+      },
+      "status": 301
+    },
+    {
+      "src": "/(.*)",
+      "dest": "index.js"
     }
   ]
 }
