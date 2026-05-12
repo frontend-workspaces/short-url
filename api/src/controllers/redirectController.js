@@ -2,8 +2,6 @@ const Link = require("../models/Link");
 const RedirectLog = require("../models/RedirectLog");
 
 exports.redirect = async (req, res) => {
-  if (!req.params.code) return res.redirect("https://portal.blly.to");
-
   try {
     const link = await Link.findOneAndUpdate(
       { code: req.params.code, isActive: true },
