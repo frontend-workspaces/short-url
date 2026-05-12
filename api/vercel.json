@@ -11,5 +11,18 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://portal.blly.to",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "blly.to"
+        }
+      ]
+    }
   ]
 }
