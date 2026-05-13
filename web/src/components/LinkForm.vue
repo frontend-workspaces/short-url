@@ -87,6 +87,30 @@
           </div>
         </div>
 
+        <!-- Expiry Date -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-1.5">
+            Expiry Date <span class="text-gray-400 dark:text-slate-500 font-normal text-xs ml-1">(optional — ไม่กรอก = ไม่มีวันหมดอายุ)</span>
+          </label>
+          <input
+            v-model="form.expiresAt"
+            type="datetime-local"
+            :min="minDatetime"
+            class="w-full border border-gray-300 dark:border-slate-600 rounded-xl px-3.5 py-2.5 text-sm
+                   bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                   transition-all duration-200"
+          />
+          <button
+            v-if="form.expiresAt"
+            type="button"
+            @click="form.expiresAt = ''"
+            class="mt-1 text-xs text-gray-400 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+          >
+            × ล้างวันหมดอายุ
+          </button>
+        </div>
+
         <!-- Active toggle -->
         <div class="flex items-center justify-between py-1">
           <div>
@@ -106,19 +130,6 @@
               class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200"
             />
           </button>
-        </div>
-
-        <!-- Error -->
-        <div
-          v-if="error"
-          class="flex items-center gap-2 text-red-700 dark:text-red-400 text-sm
-                 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/40
-                 px-4 py-3 rounded-xl animate-scale-in"
-        >
-          <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-          </svg>
-          {{ error }}
         </div>
 
         <!-- Buttons -->
@@ -151,44 +162,59 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useLinksStore } from '../stores/links';
+import { useToast } from '../composables/useToast';
 
 const props = defineProps({ link: Object });
 const emit = defineEmits(['close', 'saved']);
 const store = useLinksStore();
+const toast = useToast();
+
+const toDatetimeLocal = (d) => {
+  if (!d) return '';
+  const dt = new Date(d);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+};
 
 const form = reactive({
   title: props.link?.title || '',
   originalUrl: props.link?.originalUrl || '',
   code: '',
+  expiresAt: toDatetimeLocal(props.link?.expiresAt),
   isActive: props.link?.isActive ?? true,
 });
 
-const error = ref('');
+const minDatetime = computed(() => toDatetimeLocal(new Date()));
+
 const loading = ref(false);
 
 const handleSubmit = async () => {
-  error.value = '';
   loading.value = true;
   try {
+    const expiresAt = form.expiresAt ? new Date(form.expiresAt).toISOString() : null;
     if (props.link) {
       await store.updateLink(props.link._id, {
         title: form.title,
         originalUrl: form.originalUrl,
         isActive: form.isActive,
+        expiresAt,
       });
+      toast.success('Link updated successfully');
     } else {
       await store.createLink({
         title: form.title,
         originalUrl: form.originalUrl,
         code: form.code || undefined,
         isActive: form.isActive,
+        expiresAt,
       });
+      toast.success('Link created successfully');
     }
     emit('saved');
   } catch (e) {
-    error.value = e.response?.data?.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+    toast.error(e.response?.data?.message || 'Something went wrong, please try again');
   } finally {
     loading.value = false;
   }

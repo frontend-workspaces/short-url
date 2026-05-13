@@ -1,4 +1,4 @@
-# Short Link Manager
+# Blly.to
 
 ระบบจัดการ Short Link แบบ Microservice พัฒนาด้วย Express.js + MongoDB Atlas + Vue.js พร้อม Deploy บน Vercel
 
