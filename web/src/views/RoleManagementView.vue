@@ -85,9 +85,9 @@
           <table class="w-full text-xs">
             <thead>
               <tr>
-                <th class="text-left text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wider pb-2 pr-4 w-32">{{ $t('roles.menu') }}</th>
+                <th class="text-left text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wider pb-2 pr-4 w-32 whitespace-nowrap">{{ $t('roles.menu') }}</th>
                 <th v-for="action in ACTIONS" :key="action.key"
-                  class="text-center text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wider pb-2 px-3 w-16">
+                  class="text-center text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wider pb-2 px-3 w-16 whitespace-nowrap">
                   {{ action.label }}
                 </th>
               </tr>
@@ -165,8 +165,8 @@
                     <table class="w-full text-sm">
                       <thead>
                         <tr class="bg-gray-50 dark:bg-slate-800/60 border-b border-gray-200 dark:border-slate-700">
-                          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{{ $t('roles.menu') }}</th>
-                          <th v-for="action in ACTIONS" :key="action.key" class="px-4 py-3 text-center">
+                          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{{ $t('roles.menu') }}</th>
+                          <th v-for="action in ACTIONS" :key="action.key" class="px-4 py-3 text-center whitespace-nowrap">
                             <div class="flex flex-col items-center gap-1.5">
                               <label class="inline-flex items-center justify-center cursor-pointer" :title="`Toggle all ${action.label}`">
                                 <input type="checkbox" :checked="allActionChecked(action.key)"

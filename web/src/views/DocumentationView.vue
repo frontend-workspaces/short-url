@@ -213,9 +213,9 @@
             <table class="w-full text-sm border-collapse">
               <thead>
                 <tr class="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/70">
-                  <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Error Code</th>
-                  <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-24">Status</th>
-                  <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Description</th>
+                  <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">Error Code</th>
+                  <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap w-24">Status</th>
+                  <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">Description</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 dark:divide-slate-700/60">

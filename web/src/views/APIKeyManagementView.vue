@@ -80,13 +80,13 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('apiKeyMgmt.keyCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('apiKeyMgmt.keyCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('apiKeyMgmt.userCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('apiKeyMgmt.scopesCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('common.status') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('apiKeyMgmt.expiresCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('apiKeyMgmt.lastUsedCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('apiKeyMgmt.keyNameCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('apiKeyMgmt.apiKeyCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('apiKeyMgmt.userCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('apiKeyMgmt.scopesCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('common.status') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('apiKeyMgmt.expiresCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('apiKeyMgmt.lastUsedCol') }}</th>
               <th class="px-4 py-3 w-20" />
             </tr>
           </thead>

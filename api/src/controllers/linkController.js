@@ -22,16 +22,19 @@ exports.getLinks = async (req, res) => {
 exports.createLink = async (req, res) => {
   try {
     const { destinationUrl, code, expiresAt } = req.body;
-    let { title } = req.body;
+    let { title, description } = req.body;
     if (!destinationUrl) return fail(res, 'LINK_MISSING_URL');
-    if (!title?.trim()) {
-      title = await fetchPageTitle(destinationUrl);
+    if (!title?.trim() || !description?.trim()) {
+      const meta = await fetchPageMeta(destinationUrl);
+      if (!title?.trim()) title = meta.title;
+      if (!description?.trim()) description = meta.description;
     }
     const shortCode = code?.trim() || nanoid(7);
     const link = await Link.create({
       code: shortCode,
       destinationUrl,
       title,
+      description,
       expiresAt: expiresAt || null,
       createdBy: req.user.id,
     });
@@ -40,6 +43,7 @@ exports.createLink = async (req, res) => {
       destinationUrl: link.destinationUrl,
       shortUrl: `${BASE_SHORT_URL}/${link.code}`,
       ...(link.title ? { title: link.title } : {}),
+      ...(link.description ? { description: link.description } : {}),
     }, 201);
   } catch (err) {
     if (err.code === 11000) return fail(res, 'LINK_CODE_EXISTS');
@@ -49,8 +53,8 @@ exports.createLink = async (req, res) => {
 
 exports.updateLink = async (req, res) => {
   try {
-    const { title, destinationUrl, code, isActive, expiresAt } = req.body;
-    const update = { title, destinationUrl, isActive, expiresAt: expiresAt || null };
+    const { title, description, destinationUrl, code, isActive, expiresAt } = req.body;
+    const update = { title, description, destinationUrl, isActive, expiresAt: expiresAt || null };
     if (code?.trim()) update.code = code.trim();
     const link = await Link.findByIdAndUpdate(
       req.params.id,
@@ -289,14 +293,15 @@ const COUNTRY_NAMES = {
 
 exports.fetchMeta = async (req, res) => {
   const { url } = req.query;
-  if (!url) return ok(res, { title: '' });
-  try { new URL(url); } catch { return ok(res, { title: '' }); }
-  const title = await fetchPageTitle(url);
-  return ok(res, { title });
+  if (!url) return ok(res, { title: '', description: '' });
+  try { new URL(url); } catch { return ok(res, { title: '', description: '' }); }
+  const meta = await fetchPageMeta(url);
+  return ok(res, meta);
 };
 
-function fetchPageTitle(url, maxRedirects = 5) {
+function fetchPageMeta(url, maxRedirects = 5) {
   return new Promise((resolve) => {
+    const empty = { title: '', description: '' };
     try {
       const parsed = new URL(url);
       const isHttps = parsed.protocol === 'https:';
@@ -306,28 +311,50 @@ function fetchPageTitle(url, maxRedirects = 5) {
         port: parsed.port || (isHttps ? 443 : 80),
         path: (parsed.pathname || '/') + parsed.search,
         method: 'GET',
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LinkBot/1.0)', Accept: 'text/html' },
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+        },
         timeout: 8000,
         rejectUnauthorized: false,
       };
       const req = proto.request(options, (response) => {
         if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location && maxRedirects > 0) {
-          try { fetchPageTitle(new URL(response.headers.location, url).href, maxRedirects - 1).then(resolve); }
-          catch { resolve(''); }
+          try { fetchPageMeta(new URL(response.headers.location, url).href, maxRedirects - 1).then(resolve); }
+          catch { resolve(empty); }
           return;
         }
         let html = '';
         response.on('data', (chunk) => { html += chunk.toString(); if (html.length > 100000) req.destroy(); });
         response.on('end', () => {
-          const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
-          resolve(match ? decodeHtmlEntities(match[1].trim().replace(/\s+/g, ' ')) : '');
+          const extract = (patterns) => {
+            for (const re of patterns) {
+              const m = html.match(re);
+              if (m?.[1]?.trim()) return decodeHtmlEntities(m[1].trim().replace(/\s+/g, ' '));
+            }
+            return '';
+          };
+          resolve({
+            title: extract([
+              /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i,
+              /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i,
+              /<title[^>]*>([^<]+)<\/title>/i,
+            ]),
+            description: extract([
+              /<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i,
+              /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:description["']/i,
+              /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i,
+              /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']description["']/i,
+            ]),
+          });
         });
-        response.on('error', () => resolve(''));
+        response.on('error', () => resolve(empty));
       });
-      req.on('error', () => resolve(''));
-      req.on('timeout', () => { req.destroy(); resolve(''); });
+      req.on('error', () => resolve(empty));
+      req.on('timeout', () => { req.destroy(); resolve(empty); });
       req.end();
-    } catch { resolve(''); }
+    } catch { resolve(empty); }
   });
 }
 

@@ -46,7 +46,6 @@
               v-model="form.destinationUrl"
               type="url"
               placeholder="https://example.com/long-url"
-              @blur="onUrlBlur"
               class="w-full pl-10 pr-4 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 text-sm
                      bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
@@ -199,25 +198,30 @@ const form = reactive({
 });
 
 const minDatetime = computed(() => toDatetimeLocal(new Date()));
-
 const loading = ref(false);
 const titleFetching = ref(false);
 
-const onUrlBlur = async () => {
-  if (!form.destinationUrl || form.title) return;
-  try { new URL(form.destinationUrl); } catch { return; }
-  titleFetching.value = true;
-  try {
-    const { data } = await api.get('/links/meta', { params: { url: form.destinationUrl } });
-    if (data.title && !form.title) form.title = data.title;
-  } catch { /* ignore */ } finally {
-    titleFetching.value = false;
-  }
+const domainFallback = (url) => {
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
 };
+
+const isValidTitle = (t) => t && t.trim().length > 1 && t.trim().toLowerCase() !== 'error';
 
 const handleSubmit = async () => {
   loading.value = true;
   try {
+    if (!form.title && form.destinationUrl) {
+      titleFetching.value = true;
+      try {
+        const { data } = await api.get('/links/meta', { params: { url: form.destinationUrl } });
+        form.title = isValidTitle(data.title) ? data.title.trim() : domainFallback(form.destinationUrl);
+      } catch {
+        form.title = domainFallback(form.destinationUrl);
+      } finally {
+        titleFetching.value = false;
+      }
+    }
+
     const expiresAt = form.expiresAt ? new Date(form.expiresAt).toISOString() : null;
     if (props.link) {
       await store.updateLink(props.link._id, {

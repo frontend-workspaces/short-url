@@ -155,7 +155,7 @@ const handleSubmit = async () => {
   try {
     await auth.login(email.value, password.value);
     await auth.fetchMe();
-    router.push('/');
+    router.push('/dashboard');
   } catch (e) {
     error.value = e.response?.data?.message || t('auth.errorDefault');
   } finally {

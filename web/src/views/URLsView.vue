@@ -77,14 +77,13 @@
         <table v-else class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-12">{{ $t('urls.numberCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-32">{{ $t('urls.titleCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('urls.shortLinkCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('urls.destinationUrlCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-16">{{ $t('urls.visitsCol') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-24">{{ $t('common.status') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('urls.titleCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('urls.shortLinkCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('urls.destinationUrlCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('urls.visitsCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('common.status') }}</th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-slate-300 uppercase tracking-wide w-32 cursor-pointer select-none"
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-slate-300 uppercase tracking-wide whitespace-nowrap cursor-pointer select-none"
                 @click="toggleSort"
               >
                 <span class="flex items-center gap-1">
@@ -94,25 +93,35 @@
                   </svg>
                 </span>
               </th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-32">{{ $t('urls.expiredAtCol') }}</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-24">{{ $t('common.actions') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('urls.expiredAtCol') }}</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide whitespace-nowrap">{{ $t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50 dark:divide-slate-800">
             <tr
-              v-for="(link, idx) in pagedLinks"
+              v-for="link in pagedLinks"
               :key="link._id"
               class="hover:bg-gray-50 dark:hover:bg-slate-800/40 transition-colors group"
             >
-              <!-- No. -->
-              <td class="px-4 py-3.5 text-gray-400 dark:text-slate-600 text-xs">
-                {{ (currentPage - 1) * pageSize + idx + 1 }}
-              </td>
               <!-- Title -->
-              <td class="px-4 py-3.5 max-w-[128px]">
-                <span class="text-sm text-gray-700 dark:text-slate-300 truncate block" :title="link.title">
-                  {{ link.title || '—' }}
-                </span>
+              <td class="px-4 py-3 max-w-[240px]">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
+                    <img
+                      v-if="getFaviconUrl(link.destinationUrl)"
+                      :src="getFaviconUrl(link.destinationUrl)"
+                      class="w-5 h-5 object-contain"
+                      @error="e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'block' }"
+                    />
+                    <svg class="w-4 h-4 text-gray-400 dark:text-slate-600" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                  </div>
+                  <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate leading-snug" :title="link.title">
+                    {{ link.title || '—' }}
+                  </span>
+                </div>
               </td>
               <!-- Short Link -->
               <td class="px-4 py-3.5">
@@ -140,18 +149,10 @@
                 </div>
               </td>
               <!-- Destination URL -->
-              <td class="px-4 py-3.5 max-w-[220px]">
-                <div class="flex items-center gap-2">
-                  <img
-                    v-if="getFaviconUrl(link.destinationUrl)"
-                    :src="getFaviconUrl(link.destinationUrl)"
-                    class="w-4 h-4 rounded shrink-0"
-                    @error="$event.target.style.display = 'none'"
-                  />
-                  <span class="text-xs text-gray-500 dark:text-slate-500 truncate" :title="link.destinationUrl">
-                    {{ link.destinationUrl }}
-                  </span>
-                </div>
+              <td class="px-4 py-3 max-w-[220px]">
+                <span class="text-xs text-gray-500 dark:text-slate-500 truncate block" :title="link.destinationUrl">
+                  {{ link.destinationUrl }}
+                </span>
               </td>
               <!-- Visits -->
               <td class="px-4 py-3.5 text-gray-700 dark:text-slate-300 font-medium text-sm">
