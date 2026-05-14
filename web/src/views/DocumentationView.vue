@@ -325,7 +325,7 @@ const endpoints = [
     path: '/v1/shorten',
     desc: 'Creates a new short link. Returns the created link object including the generated short code.',
     body: [
-      { name: 'originalUrl', type: 'string',   required: true,  desc: 'The destination URL to shorten' },
+      { name: 'destinationUrl', type: 'string',   required: true,  desc: 'The destination URL to shorten' },
       { name: 'title',       type: 'string',   required: false, desc: 'A human-readable label for the link' },
       { name: 'code',        type: 'string',   required: false, desc: 'Custom short code — auto-generated if omitted' },
       { name: 'expiresAt',   type: 'ISO date', required: false, desc: 'Expiry date/time after which the link stops redirecting' },
@@ -334,7 +334,7 @@ const endpoints = [
   -H "X-API-Key: YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "originalUrl": "https://example.com/very/long/url",
+    "destinationUrl": "https://example.com/very/long/url",
     "title": "My Link",
     "code": "my-link"
   }'`,
@@ -345,7 +345,7 @@ const endpoints = [
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    originalUrl: 'https://example.com/very/long/url',
+    destinationUrl: 'https://example.com/very/long/url',
     title: 'My Link',
     code: 'my-link',
   }),
@@ -389,7 +389,7 @@ const errorGroups = [
     label: 'Link',
     badgeClass: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
     codes: [
-      { code: 'LINK_MISSING_URL',  status: 400, message: 'originalUrl is required' },
+      { code: 'LINK_MISSING_URL',  status: 400, message: 'destinationUrl is required' },
       { code: 'LINK_CODE_EXISTS',  status: 400, message: 'Short code already exists' },
       { code: 'LINK_NOT_FOUND',    status: 404, message: 'Link not found' },
       { code: 'LINK_EXPIRED',      status: 410, message: 'This link has expired' },

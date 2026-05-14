@@ -1,27 +1,22 @@
 <template>
   <div class="px-4 lg:px-8 py-6 space-y-5">
 
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">API Key</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">{{ $t('apiKey.title') }}</h1>
 
     <!-- Info banner -->
     <div class="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/40 rounded-2xl px-4 py-3.5">
       <svg class="w-4 h-4 text-blue-500 dark:text-blue-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
       </svg>
-      <p class="text-sm text-blue-700 dark:text-blue-300">
-        <span class="font-semibold">Note:</span>
-        Use your API key to authenticate requests by adding the header
-        <code class="font-mono bg-blue-100 dark:bg-blue-800/50 px-1.5 py-0.5 rounded text-xs">X-API-Key: &lt;your-key&gt;</code>
-        to your requests.
-      </p>
+      <p class="text-sm text-blue-700 dark:text-blue-300">{{ $t('apiKey.infoNote') }}</p>
     </div>
 
     <!-- API Key Card -->
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-700/60 shadow-sm p-6 space-y-5">
 
       <div>
-        <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">Your API Key</h2>
-        <p class="mt-1 text-sm text-gray-500 dark:text-slate-500">Keep this key secure and do not share it publicly.</p>
+        <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">{{ $t('apiKey.yourKey') }}</h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-slate-500">{{ $t('apiKey.keepSecure') }}</p>
       </div>
 
       <!-- Key display -->
@@ -33,7 +28,7 @@
         <button
           @click="showKey = !showKey"
           class="shrink-0 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
-          :title="showKey ? 'Hide' : 'Show'"
+          :title="showKey ? $t('apiKey.hide') : $t('apiKey.show')"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path v-if="showKey" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -45,7 +40,7 @@
         <button
           @click="copyKey"
           class="shrink-0 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
-          title="Copy"
+          :title="$t('common.copy')"
         >
           <svg v-if="copied" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
@@ -59,7 +54,7 @@
 
       <!-- No key yet -->
       <div v-else-if="!loading" class="bg-gray-50 dark:bg-slate-800 border border-dashed border-gray-300 dark:border-slate-600 rounded-xl px-4 py-6 text-center">
-        <p class="text-sm text-gray-500 dark:text-slate-400">You don't have an API key yet. Generate one below.</p>
+        <p class="text-sm text-gray-500 dark:text-slate-400">{{ $t('apiKey.noKey') }}</p>
       </div>
 
       <!-- Generate / Regenerate -->
@@ -77,11 +72,11 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        {{ regenerating ? 'Generating...' : (auth.apiKey ? 'Regenerate API Key' : 'Generate API Key') }}
+        {{ regenerating ? $t('apiKey.generating') : (auth.apiKey ? $t('apiKey.regenerate') : $t('apiKey.generate')) }}
       </button>
 
       <p v-if="auth.apiKey" class="text-xs text-gray-400 dark:text-slate-600 text-center">
-        Regenerating will invalidate your current key immediately.
+        {{ $t('apiKey.regenerateWarning') }}
       </p>
     </div>
 
@@ -90,9 +85,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import { useToast } from '../composables/useToast';
 
+const { t } = useI18n();
 const auth = useAuthStore();
 const toast = useToast();
 
@@ -105,21 +102,21 @@ const copyKey = async () => {
   if (!auth.apiKey) return;
   await navigator.clipboard.writeText(auth.apiKey);
   copied.value = true;
-  toast.success('Copied to clipboard');
+  toast.success(t('apiKey.copied'));
   setTimeout(() => { copied.value = false; }, 2000);
 };
 
 const handleRegenerate = async () => {
   if (auth.apiKey) {
-    if (!confirm('Regenerating will invalidate your current key. Continue?')) return;
+    if (!confirm(t('apiKey.regenerateConfirm'))) return;
   }
   regenerating.value = true;
   try {
     await auth.regenerateApiKey();
     showKey.value = false;
-    toast.success('API key generated successfully');
+    toast.success(t('apiKey.generated'));
   } catch {
-    toast.error('Failed to generate API key');
+    toast.error(t('apiKey.generateFailed'));
   } finally {
     regenerating.value = false;
   }

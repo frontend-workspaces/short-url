@@ -4,14 +4,14 @@ import api from '../api';
 export const useApiKeysStore = defineStore('apiKeys', {
   state: () => ({
     keys: [],
-    pagination: { total: 0, page: 1, limit: 20, pages: 1 },
+    pagination: { total: 0, page: 1, limit: 5, pages: 1 },
     loading: false,
   }),
   actions: {
-    async fetchKeys({ search = '', status = '', page = 1 } = {}) {
+    async fetchKeys({ search = '', status = '', page = 1, limit = 5 } = {}) {
       this.loading = true;
       try {
-        const params = { page, limit: 500 };
+        const params = { page, limit };
         if (search) params.search = search;
         if (status) params.status = status;
         const { data } = await api.get('/api-keys', { params });

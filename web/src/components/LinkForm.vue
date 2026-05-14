@@ -15,7 +15,7 @@
             </svg>
           </div>
           <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">
-            {{ link ? 'แก้ไข Short Link' : 'สร้าง Short Link ใหม่' }}
+            {{ link ? $t('linkForm.editTitle') : $t('linkForm.createTitle') }}
           </h2>
         </div>
         <button
@@ -30,26 +30,10 @@
 
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="p-6 space-y-5">
-        <!-- Title -->
+        <!-- Destination URL -->
         <div>
           <label class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-1.5">
-            Title <span class="text-gray-400 dark:text-slate-500 font-normal text-xs ml-1">(optional)</span>
-          </label>
-          <input
-            v-model="form.title"
-            type="text"
-            placeholder="ชื่อสำหรับจดจำ"
-            class="w-full border border-gray-300 dark:border-slate-600 rounded-xl px-3.5 py-2.5 text-sm
-                   bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500
-                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                   transition-all duration-200"
-          />
-        </div>
-
-        <!-- Original URL -->
-        <div>
-          <label class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-1.5">
-            Original URL <span class="text-red-500">*</span>
+            {{ $t('linkForm.destinationUrl') }}
           </label>
           <div class="relative">
             <span class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
@@ -59,10 +43,10 @@
               </svg>
             </span>
             <input
-              v-model="form.originalUrl"
+              v-model="form.destinationUrl"
               type="url"
-              required
               placeholder="https://example.com/long-url"
+              @blur="onUrlBlur"
               class="w-full pl-10 pr-4 border border-gray-300 dark:border-slate-600 rounded-xl py-2.5 text-sm
                      bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
@@ -71,26 +55,51 @@
           </div>
         </div>
 
-        <!-- Custom code (create only) -->
-        <div v-if="!link">
+        <!-- Custom back-half -->
+        <div>
           <label class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-1.5">
-            Custom Code <span class="text-gray-400 dark:text-slate-500 font-normal text-xs ml-1">(ปล่อยว่างเพื่อสุ่มอัตโนมัติ)</span>
+            {{ $t('linkForm.customCode') }} <span v-if="!link" class="text-gray-400 dark:text-slate-500 font-normal text-xs ml-1">{{ $t('linkForm.customCodeHint') }}</span>
           </label>
-          <div class="flex items-stretch border border-gray-300 dark:border-slate-600 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all duration-200">
-            <span class="px-3.5 flex items-center text-gray-600 dark:text-slate-400 text-sm font-bold bg-gray-100 dark:bg-slate-700 border-r border-gray-300 dark:border-slate-600 select-none">/</span>
+          <div class="flex items-center border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all duration-200 px-3.5 py-2.5 gap-0.5">
+            <span class="text-sm text-gray-400 dark:text-slate-500 select-none shrink-0">{{ shortDomain }}/</span>
             <input
               v-model="form.code"
               type="text"
-              placeholder="my-link"
-              class="flex-1 px-3 py-2.5 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none"
+              :placeholder="$t('linkForm.customCodePlaceholder')"
+              class="flex-1 text-sm bg-transparent text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none min-w-0"
             />
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-1.5">
+            {{ $t('linkForm.titleLabel') }} <span class="text-gray-400 dark:text-slate-500 font-normal text-xs ml-1">{{ $t('common.optional') }}</span>
+          </label>
+          <div class="relative">
+            <input
+              v-model="form.title"
+              type="text"
+              :placeholder="titleFetching ? $t('linkForm.fetchingTitle') : $t('linkForm.titlePlaceholder')"
+              :disabled="titleFetching"
+              class="w-full border border-gray-300 dark:border-slate-600 rounded-xl px-3.5 py-2.5 text-sm
+                     bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                     transition-all duration-200 disabled:opacity-60"
+            />
+            <div v-if="titleFetching" class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            </div>
           </div>
         </div>
 
         <!-- Expiry Date -->
         <div>
           <label class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-1.5">
-            Expiry Date <span class="text-gray-400 dark:text-slate-500 font-normal text-xs ml-1">(optional — ไม่กรอก = ไม่มีวันหมดอายุ)</span>
+            {{ $t('linkForm.expiryDate') }} <span class="text-gray-400 dark:text-slate-500 font-normal text-xs ml-1">{{ $t('linkForm.expiryHint') }}</span>
           </label>
           <input
             v-model="form.expiresAt"
@@ -107,16 +116,16 @@
             @click="form.expiresAt = ''"
             class="mt-1 text-xs text-gray-400 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 transition-colors"
           >
-            × ล้างวันหมดอายุ
+            {{ $t('linkForm.clearExpiry') }}
           </button>
         </div>
 
         <!-- Active toggle -->
         <div class="flex items-center justify-between py-1">
           <div>
-            <p class="text-sm font-semibold text-gray-800 dark:text-slate-200">สถานะ Link</p>
+            <p class="text-sm font-semibold text-gray-800 dark:text-slate-200">{{ $t('linkForm.linkStatus') }}</p>
             <p class="text-xs text-gray-500 dark:text-slate-500 mt-0.5">
-              {{ form.isActive ? 'Link พร้อมใช้งาน' : 'Link ถูกปิดใช้งาน' }}
+              {{ form.isActive ? $t('linkForm.linkActive') : $t('linkForm.linkInactive') }}
             </p>
           </div>
           <button
@@ -139,7 +148,7 @@
             @click="$emit('close')"
             class="flex-1 py-3.5 rounded-2xl border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-200"
           >
-            ยกเลิก
+            {{ $t('common.cancel') }}
           </button>
           <button
             type="submit"
@@ -150,7 +159,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            {{ loading ? 'กำลังบันทึก...' : 'บันทึก' }}
+            {{ loading ? $t('linkForm.saving') : $t('linkForm.save') }}
           </button>
         </div>
       </form>
@@ -160,13 +169,19 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useLinksStore } from '../stores/links';
 import { useToast } from '../composables/useToast';
+import api from '../api';
 
 const props = defineProps({ link: Object });
 const emit = defineEmits(['close', 'saved']);
 const store = useLinksStore();
 const toast = useToast();
+const { t } = useI18n();
+
+const baseShortUrl = import.meta.env.VITE_BASE_SHORT_URL || '';
+const shortDomain = baseShortUrl.replace(/^https?:\/\//, '');
 
 const toDatetimeLocal = (d) => {
   if (!d) return '';
@@ -177,8 +192,8 @@ const toDatetimeLocal = (d) => {
 
 const form = reactive({
   title: props.link?.title || '',
-  originalUrl: props.link?.originalUrl || '',
-  code: '',
+  destinationUrl: props.link?.destinationUrl || '',
+  code: props.link?.code || '',
   expiresAt: toDatetimeLocal(props.link?.expiresAt),
   isActive: props.link?.isActive ?? true,
 });
@@ -186,6 +201,19 @@ const form = reactive({
 const minDatetime = computed(() => toDatetimeLocal(new Date()));
 
 const loading = ref(false);
+const titleFetching = ref(false);
+
+const onUrlBlur = async () => {
+  if (!form.destinationUrl || form.title) return;
+  try { new URL(form.destinationUrl); } catch { return; }
+  titleFetching.value = true;
+  try {
+    const { data } = await api.get('/links/meta', { params: { url: form.destinationUrl } });
+    if (data.title && !form.title) form.title = data.title;
+  } catch { /* ignore */ } finally {
+    titleFetching.value = false;
+  }
+};
 
 const handleSubmit = async () => {
   loading.value = true;
@@ -194,24 +222,25 @@ const handleSubmit = async () => {
     if (props.link) {
       await store.updateLink(props.link._id, {
         title: form.title,
-        originalUrl: form.originalUrl,
-        isActive: form.isActive,
-        expiresAt,
-      });
-      toast.success('Link updated successfully');
-    } else {
-      await store.createLink({
-        title: form.title,
-        originalUrl: form.originalUrl,
+        destinationUrl: form.destinationUrl,
         code: form.code || undefined,
         isActive: form.isActive,
         expiresAt,
       });
-      toast.success('Link created successfully');
+      toast.success(t('linkForm.updated'));
+    } else {
+      await store.createLink({
+        title: form.title,
+        destinationUrl: form.destinationUrl,
+        code: form.code || undefined,
+        isActive: form.isActive,
+        expiresAt,
+      });
+      toast.success(t('linkForm.created'));
     }
     emit('saved');
   } catch (e) {
-    toast.error(e.response?.data?.message || 'Something went wrong, please try again');
+    toast.error(e.response?.data?.message || t('linkForm.errorDefault'));
   } finally {
     loading.value = false;
   }

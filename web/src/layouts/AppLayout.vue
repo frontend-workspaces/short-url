@@ -64,7 +64,7 @@
 
               <!-- Section label -->
               <div v-if="item.section" :key="'s-' + item.section" class="px-3 pt-4 pb-1.5">
-                <p class="text-[10px] font-bold text-gray-400 dark:text-slate-600 uppercase tracking-[0.1em]">{{ item.section }}</p>
+                <p class="text-[10px] font-bold text-gray-400 dark:text-slate-600 uppercase tracking-[0.1em]">{{ $t(item.section) }}</p>
               </div>
 
               <!-- Nav link -->
@@ -106,7 +106,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.iconD" />
                 </svg>
 
-                <span class="truncate">{{ item.label }}</span>
+                <span class="truncate">{{ $t(item.labelKey) }}</span>
 
                 <!-- Active dot accent -->
                 <span
@@ -159,6 +159,9 @@
         </button>
 
         <div class="ml-auto flex items-center gap-2">
+          <!-- Language switcher -->
+          <LanguageSwitcher />
+
           <!-- Theme toggle -->
           <ThemeToggle />
 
@@ -172,7 +175,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span class="hidden sm:inline">Logout</span>
+            <span class="hidden sm:inline">{{ $t('nav.logout') }}</span>
           </button>
         </div>
       </header>
@@ -209,6 +212,7 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import { useUIStore } from '../stores/ui';
 import { useLinksStore } from '../stores/links';
@@ -218,9 +222,11 @@ import LinkForm from '../components/LinkForm.vue';
 import LogModal from '../components/LogModal.vue';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
 import ThemeToggle from '../components/ThemeToggle.vue';
+import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 import ToastContainer from '../components/ToastContainer.vue';
 
 const router = useRouter();
+const { t } = useI18n();
 const auth = useAuthStore();
 const ui = useUIStore();
 const store = useLinksStore();
@@ -228,15 +234,15 @@ const { init: initTheme } = useTheme();
 const { can } = usePermission();
 
 const navItems = [
-  { path: '/dashboard', label: 'Dashboard', permission: 'dashboard', iconD: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-  { path: '/urls',      label: 'URLs',      permission: 'urls',      iconD: 'M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14' },
-  { section: 'Management' },
-  { path: '/users',              label: 'Users',       permission: 'users',    iconD: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
-  { path: '/roles',              label: 'Roles',       permission: 'roles',    iconD: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
-  { path: '/api-key-management', label: 'API Keys',    permission: 'api_keys', iconD: 'M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18' },
-  { section: 'Account' },
-  { path: '/api-key',   label: 'API Key',    permission: 'api_key', iconD: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z' },
-  { path: '/docs',      label: 'Docs',       permission: 'docs',    iconD: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+  { path: '/dashboard', labelKey: 'nav.dashboard', permission: 'dashboard', iconD: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+  { path: '/urls',      labelKey: 'nav.urls',      permission: 'urls',      iconD: 'M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14' },
+  { section: 'nav.management' },
+  { path: '/users',              labelKey: 'nav.users',   permission: 'users',    iconD: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+  { path: '/roles',              labelKey: 'nav.roles',   permission: 'roles',    iconD: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+  { path: '/api-key-management', labelKey: 'nav.apiKeys', permission: 'api_keys', iconD: 'M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18' },
+  { section: 'nav.account' },
+  { path: '/api-key',   labelKey: 'nav.apiKey', permission: 'api_key', iconD: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z' },
+  { path: '/docs',      labelKey: 'nav.docs',   permission: 'docs',    iconD: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
 ];
 
 const visibleNavItems = computed(() => {

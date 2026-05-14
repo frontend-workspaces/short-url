@@ -29,7 +29,7 @@
           <tr class="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/60">
             <th class="px-5 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">Title</th>
             <th class="px-5 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">Short Link</th>
-            <th class="px-5 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">Original URL</th>
+            <th class="px-5 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">Destination URL</th>
             <th class="px-5 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">Clicks</th>
             <th class="px-5 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">Status</th>
             <th class="px-5 py-3.5 text-left text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">วันที่สร้าง</th>
@@ -76,10 +76,10 @@
               </div>
             </td>
 
-            <!-- Original URL -->
+            <!-- Destination URL -->
             <td class="px-5 py-4 max-w-[200px]">
-              <span class="text-sm text-gray-600 dark:text-slate-400 truncate block" :title="link.originalUrl">
-                {{ link.originalUrl }}
+              <span class="text-sm text-gray-600 dark:text-slate-400 truncate block" :title="link.destinationUrl">
+                {{ link.destinationUrl }}
               </span>
             </td>
 

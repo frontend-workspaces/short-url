@@ -13,10 +13,10 @@
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
         </div>
-        <h3 class="text-lg font-bold text-gray-900 dark:text-slate-100">ออกจากระบบ</h3>
+        <h3 class="text-lg font-bold text-gray-900 dark:text-slate-100">{{ $t('confirm.logoutTitle') }}</h3>
         <p class="text-sm text-gray-500 dark:text-slate-400 mt-2 leading-relaxed">
-          คุณต้องการออกจากระบบใช่หรือไม่?<br />
-          <span class="text-gray-400 dark:text-slate-500 text-xs">Session ของคุณจะสิ้นสุดลง</span>
+          {{ $t('confirm.logoutMessage') }}<br />
+          <span class="text-gray-400 dark:text-slate-500 text-xs">{{ $t('confirm.logoutHint') }}</span>
         </p>
       </div>
 
@@ -26,13 +26,13 @@
           @click="$emit('cancel')"
           class="flex-1 py-3.5 rounded-2xl border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-200"
         >
-          ยกเลิก
+          {{ $t('confirm.cancel') }}
         </button>
         <button
           @click="$emit('confirm')"
           class="flex-1 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 transition-all duration-200"
         >
-          ออกจากระบบ
+          {{ $t('confirm.logoutBtn') }}
         </button>
       </div>
     </div>
@@ -40,5 +40,8 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
+
 defineEmits(['confirm', 'cancel']);
+const { t } = useI18n();
 </script>

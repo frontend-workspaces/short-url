@@ -1,7 +1,7 @@
 <template>
   <div class="px-4 lg:px-8 py-6 space-y-5">
 
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Profile</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">{{ $t('profile.title') }}</h1>
 
     <!-- Profile Information Card -->
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-700/60 shadow-sm p-6">
@@ -13,8 +13,8 @@
           </svg>
         </div>
         <div>
-          <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">Profile Information</h2>
-          <p class="text-sm text-gray-500 dark:text-slate-500">Update your profile information</p>
+          <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">{{ $t('profile.infoSection') }}</h2>
+          <p class="text-sm text-gray-500 dark:text-slate-500">{{ $t('profile.infoDesc') }}</p>
         </div>
       </div>
 
@@ -22,7 +22,7 @@
       <div class="space-y-3">
         <!-- Full Name -->
         <div class="relative border border-gray-200 dark:border-slate-700 rounded-xl px-4 pt-5 pb-3 focus-within:border-blue-500 dark:focus-within:border-blue-500 transition-colors">
-          <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">Full Name</label>
+          <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">{{ $t('profile.fullName') }}</label>
           <input
             v-model="profileForm.fullName"
             type="text"
@@ -34,7 +34,7 @@
 
         <!-- Email (read-only) -->
         <div class="relative border border-gray-200 dark:border-slate-700 rounded-xl px-4 pt-5 pb-3 bg-gray-50 dark:bg-slate-800/50">
-          <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">Email</label>
+          <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">{{ $t('auth.email') }}</label>
           <input
             :value="auth.user?.email"
             type="email"
@@ -51,7 +51,7 @@
             @click="startEdit"
             class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-blue-500/25"
           >
-            Edit Profile
+            {{ $t('profile.editBtn') }}
           </button>
         </template>
         <template v-else>
@@ -59,7 +59,7 @@
             @click="cancelEdit"
             class="px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </button>
           <button
             @click="saveProfile"
@@ -70,7 +70,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Save Changes
+            {{ $t('profile.saveBtn') }}
           </button>
         </template>
       </div>
@@ -79,18 +79,18 @@
     <!-- Change Password Card -->
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-700/60 shadow-sm p-6">
       <div class="mb-5">
-        <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">Change Password</h2>
-        <p class="text-sm text-gray-500 dark:text-slate-500">Update your password</p>
+        <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">{{ $t('profile.passwordSection') }}</h2>
+        <p class="text-sm text-gray-500 dark:text-slate-500">{{ $t('profile.passwordDesc') }}</p>
       </div>
 
       <template v-if="!changingPassword">
-        <p class="text-sm text-gray-500 dark:text-slate-500 mb-5">Click the button below to change your password</p>
+        <p class="text-sm text-gray-500 dark:text-slate-500 mb-5">{{ $t('profile.passwordNote') }}</p>
         <div class="flex justify-end">
           <button
             @click="changingPassword = true"
             class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-blue-500/25"
           >
-            Change Password
+            {{ $t('profile.changePasswordBtn') }}
           </button>
         </div>
       </template>
@@ -99,7 +99,7 @@
         <div class="space-y-3">
           <!-- Current Password -->
           <div class="relative border border-gray-200 dark:border-slate-700 rounded-xl px-4 pt-5 pb-3 focus-within:border-blue-500 dark:focus-within:border-blue-500 transition-colors">
-            <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">Current Password</label>
+            <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">{{ $t('profile.currentPassword') }}</label>
             <div class="flex items-center gap-2">
               <input
                 v-model="pwForm.current"
@@ -119,7 +119,7 @@
 
           <!-- New Password -->
           <div class="relative border border-gray-200 dark:border-slate-700 rounded-xl px-4 pt-5 pb-3 focus-within:border-blue-500 dark:focus-within:border-blue-500 transition-colors">
-            <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">New Password</label>
+            <label class="absolute top-2 left-4 text-xs text-gray-400 dark:text-slate-500 font-medium">{{ $t('profile.newPassword') }}</label>
             <div class="flex items-center gap-2">
               <input
                 v-model="pwForm.newPw"
@@ -144,7 +144,7 @@
             @click="cancelPassword"
             class="px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </button>
           <button
             @click="submitPassword"
@@ -155,7 +155,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Update Password
+            {{ $t('profile.updatePasswordBtn') }}
           </button>
         </div>
       </template>
@@ -166,9 +166,11 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import { useToast } from '../composables/useToast';
 
+const { t } = useI18n();
 const auth = useAuthStore();
 const toast = useToast();
 
@@ -192,9 +194,9 @@ const saveProfile = async () => {
   try {
     await auth.updateProfile(profileForm.fullName);
     editing.value = false;
-    toast.success('Profile updated successfully');
+    toast.success(t('profile.updated'));
   } catch (e) {
-    toast.error(e.response?.data?.message || 'Failed to update profile');
+    toast.error(e.response?.data?.message || t('profile.updateFailed'));
   } finally {
     profileLoading.value = false;
   }
@@ -215,7 +217,7 @@ const cancelPassword = () => {
 
 const submitPassword = async () => {
   if (!pwForm.current || !pwForm.newPw) {
-    toast.error('Please fill in all fields');
+    toast.error(t('profile.fillAllFields'));
     return;
   }
   pwLoading.value = true;
@@ -224,9 +226,9 @@ const submitPassword = async () => {
     pwForm.current = '';
     pwForm.newPw = '';
     changingPassword.value = false;
-    toast.success('Password changed successfully');
+    toast.success(t('profile.passwordChanged'));
   } catch (e) {
-    toast.error(e.response?.data?.message || 'Failed to change password');
+    toast.error(e.response?.data?.message || t('profile.passwordChangeFailed'));
   } finally {
     pwLoading.value = false;
   }

@@ -2,17 +2,23 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [
+  // Landing page (public)
+  {
+    path: '/',
+    component: () => import('../views/LandingView.vue'),
+    meta: { public: true },
+  },
   {
     path: '/login',
     component: () => import('../views/LoginView.vue'),
     meta: { guest: true },
   },
+  // App layout — children define their own absolute-style paths via named routes
   {
     path: '/',
     component: () => import('../layouts/AppLayout.vue'),
     meta: { requiresAuth: true },
     children: [
-      { path: '', redirect: '/dashboard' },
       { path: 'dashboard', component: () => import('../views/DashboardView.vue'), meta: { permission: 'dashboard' } },
       { path: 'urls',      component: () => import('../views/URLsView.vue'),            meta: { permission: 'urls' } },
       { path: 'users',     component: () => import('../views/UserManagementView.vue'),  meta: { permission: 'users' } },
@@ -33,7 +39,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   const token = localStorage.getItem('token');
   if (to.meta.requiresAuth && !token) return '/login';
-  if (to.meta.guest && token) return '/';
+  if (to.meta.guest && token) return '/dashboard';
 
   // Permission guard — only runs when permissions are already loaded
   if (to.meta.permission && token) {

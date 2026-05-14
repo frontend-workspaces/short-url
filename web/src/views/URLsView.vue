@@ -3,7 +3,7 @@
 
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">URLs</h1>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">{{ $t('urls.title') }}</h1>
       <button
         @click="ui.openCreate()"
         class="shorten-btn flex items-center gap-2 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white px-4 py-2.5 rounded-2xl text-sm font-bold transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-px active:translate-y-0 active:shadow-md"
@@ -11,7 +11,7 @@
         <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-90 shorten-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
         </svg>
-        Shorten URL
+        {{ $t('urls.shortenBtn') }}
       </button>
     </div>
 
@@ -28,7 +28,7 @@
           <input
             v-model="search"
             type="text"
-            placeholder="Search URL..."
+            :placeholder="$t('urls.searchPlaceholder')"
             class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             @input="currentPage = 1"
           />
@@ -40,12 +40,12 @@
             v-model="activeFilter"
             @change="currentPage = 1"
             :options="[
-              { value: 'all',      label: 'All Statuses' },
-              { value: 'active',   label: 'Active',   dot: 'bg-emerald-500' },
-              { value: 'inactive', label: 'Inactive', dot: 'bg-gray-400' },
-              { value: 'expired',  label: 'Expired',  dot: 'bg-orange-500' },
+              { value: 'all',      label: $t('common.allStatuses') },
+              { value: 'active',   label: $t('common.active'),   dot: 'bg-emerald-500' },
+              { value: 'inactive', label: $t('common.inactive'), dot: 'bg-gray-400' },
+              { value: 'expired',  label: $t('common.expired'),  dot: 'bg-orange-500' },
             ]"
-            placeholder="All Statuses"
+            :placeholder="$t('common.allStatuses')"
           />
         </div>
       </div>
@@ -58,7 +58,7 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          <span class="text-sm">กำลังโหลด...</span>
+          <span class="text-sm">{{ $t('common.loading') }}</span>
         </div>
 
         <!-- Empty -->
@@ -69,33 +69,33 @@
                 d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
           </div>
-          <p class="font-semibold text-gray-700 dark:text-slate-300">ไม่พบลิงค์</p>
-          <p class="text-sm text-gray-400 dark:text-slate-600">ลองเปลี่ยน filter หรือสร้างลิงค์ใหม่</p>
+          <p class="font-semibold text-gray-700 dark:text-slate-300">{{ $t('urls.noLinks') }}</p>
+          <p class="text-sm text-gray-400 dark:text-slate-600">{{ $t('urls.noLinksHint') }}</p>
         </div>
 
         <!-- Data table -->
         <table v-else class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-12">No.</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-32">Title</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">Short Link</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">Original URL</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-16">Visits</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-24">Status</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-12">{{ $t('urls.numberCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-32">{{ $t('urls.titleCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('urls.shortLinkCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('urls.destinationUrlCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-16">{{ $t('urls.visitsCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-24">{{ $t('common.status') }}</th>
               <th
                 class="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-slate-300 uppercase tracking-wide w-32 cursor-pointer select-none"
                 @click="toggleSort"
               >
                 <span class="flex items-center gap-1">
-                  Created At
+                  {{ $t('common.createdAt') }}
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                   </svg>
                 </span>
               </th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-32">Expired At</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-24">Actions</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-32">{{ $t('urls.expiredAtCol') }}</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide w-24">{{ $t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50 dark:divide-slate-800">
@@ -127,7 +127,7 @@
                   <button
                     @click="copyLink(link.code)"
                     class="opacity-0 group-hover:opacity-100 p-1 rounded text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-all"
-                    :title="copied === link.code ? 'Copied!' : 'Copy'"
+                    :title="copied === link.code ? $t('common.copied') : $t('common.copy')"
                   >
                     <svg v-if="copied !== link.code" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -139,11 +139,19 @@
                   </button>
                 </div>
               </td>
-              <!-- Original URL -->
-              <td class="px-4 py-3.5 max-w-[200px]">
-                <span class="text-xs text-gray-500 dark:text-slate-500 truncate block" :title="link.originalUrl">
-                  {{ link.originalUrl }}
-                </span>
+              <!-- Destination URL -->
+              <td class="px-4 py-3.5 max-w-[220px]">
+                <div class="flex items-center gap-2">
+                  <img
+                    v-if="getFaviconUrl(link.destinationUrl)"
+                    :src="getFaviconUrl(link.destinationUrl)"
+                    class="w-4 h-4 rounded shrink-0"
+                    @error="$event.target.style.display = 'none'"
+                  />
+                  <span class="text-xs text-gray-500 dark:text-slate-500 truncate" :title="link.destinationUrl">
+                    {{ link.destinationUrl }}
+                  </span>
+                </div>
               </td>
               <!-- Visits -->
               <td class="px-4 py-3.5 text-gray-700 dark:text-slate-300 font-medium text-sm">
@@ -178,21 +186,28 @@
               </td>
               <td class="px-4 py-3.5">
                 <div class="flex justify-end gap-1">
-                  <button @click="ui.openLogs(link)" title="ดู Logs"
+                  <button @click="analyticsLink = link" title="Analytics"
+                    class="p-1.5 rounded-lg text-violet-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </button>
+                  <button @click="ui.openLogs(link)" :title="$t('common.viewLogs')"
                     class="p-1.5 rounded-lg text-gray-400 dark:text-slate-600 hover:text-gray-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                   </button>
-                  <button @click="ui.openEdit(link)" title="แก้ไข"
+                  <button @click="ui.openEdit(link)" :title="$t('common.edit')"
                     class="p-1.5 rounded-lg text-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </button>
-                  <button @click="handleDelete(link._id)" title="ลบ"
+                  <button @click="handleDelete(link._id)" :title="$t('common.delete')"
                     class="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -207,55 +222,80 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="filteredLinks.length > 0" class="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-slate-800">
-        <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-500">
-          <span>{{ paginationInfo }}</span>
-          <div class="w-28">
-            <AppSelect
-              v-model="pageSize"
-              @change="currentPage = 1"
-              :options="[
-                { value: 10,  label: '10 / page' },
-                { value: 50,  label: '50 / page' },
-                { value: 100, label: '100 / page' },
-              ]"
-              trigger-class="!py-1.5 !text-xs"
-            />
-          </div>
-        </div>
+      <div v-if="filteredLinks.length > 0" class="flex items-center justify-between px-5 py-3 border-t border-gray-100 dark:border-slate-800 gap-4">
+        <!-- Left: total -->
+        <span class="text-sm font-medium text-gray-600 dark:text-slate-400 shrink-0">
+          {{ $t('urls.total', { n: filteredLinks.length }) }}
+        </span>
+        <!-- Center: page buttons -->
         <div class="flex items-center gap-1">
           <button
             :disabled="currentPage <= 1"
             @click="currentPage--"
-            class="p-1.5 rounded-lg text-gray-500 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
+            v-for="p in pageNumbers"
+            :key="p"
+            @click="currentPage = p"
+            class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-colors"
+            :class="p === currentPage
+              ? 'bg-indigo-100 dark:bg-blue-900/40 text-indigo-600 dark:text-blue-400 font-semibold'
+              : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 border border-gray-200 dark:border-slate-700'"
+          >{{ p }}</button>
+          <button
             :disabled="currentPage >= totalPages"
             @click="currentPage++"
-            class="p-1.5 rounded-lg text-gray-500 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
+        <!-- Right: per-page -->
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-sm text-gray-500 dark:text-slate-500">{{ $t('common.showPerPage') }}</span>
+          <div class="w-20">
+            <AppSelect
+              v-model="pageSize"
+              @change="currentPage = 1"
+              :options="[
+                { value: 5,  label: '5' },
+                { value: 10, label: '10' },
+                { value: 25, label: '25' },
+                { value: 50, label: '50' },
+              ]"
+              trigger-class="!py-1.5 !text-sm !px-2.5"
+            />
+          </div>
+        </div>
       </div>
     </div>
 
+  <!-- Analytics Modal -->
+  <LinkAnalyticsModal
+    v-if="analyticsLink"
+    :link="analyticsLink"
+    @close="analyticsLink = null"
+  />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useLinksStore } from '../stores/links';
 import { useUIStore } from '../stores/ui';
 import { useToast } from '../composables/useToast';
 import AppSelect from '../components/AppSelect.vue';
+import LinkAnalyticsModal from '../components/LinkAnalyticsModal.vue';
 
+const { t } = useI18n();
 const store = useLinksStore();
 const ui = useUIStore();
 const toast = useToast();
@@ -264,9 +304,10 @@ const baseShortUrl = import.meta.env.VITE_BASE_SHORT_URL || '';
 const search = ref('');
 const activeFilter = ref('all');
 const currentPage = ref(1);
-const pageSize = ref(10);
+const pageSize = ref(5);
 const sortDesc = ref(true);
 const copied = ref(null);
+const analyticsLink = ref(null);
 
 
 const isExpired = (link) => !!link.expiresAt && new Date(link.expiresAt) < new Date();
@@ -274,20 +315,20 @@ const isExpired = (link) => !!link.expiresAt && new Date(link.expiresAt) < new D
 const linkStatus = (link) => {
   if (isExpired(link)) {
     return {
-      label: 'Expired',
+      label: t('common.expired'),
       cls: 'bg-orange-50 text-orange-600 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/40',
       dotCls: '',
     };
   }
   if (!link.isActive) {
     return {
-      label: 'Inactive',
+      label: t('common.inactive'),
       cls: 'bg-gray-100 text-gray-500 border-gray-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700',
       dotCls: 'bg-gray-400 dark:bg-slate-500',
     };
   }
   return {
-    label: 'Active',
+    label: t('common.active'),
     cls: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/40',
     dotCls: 'bg-green-500 dark:bg-green-400',
   };
@@ -299,7 +340,7 @@ const filteredLinks = computed(() => {
     if (search.value) {
       const q = search.value.toLowerCase();
       if (!link.code.toLowerCase().includes(q) &&
-          !link.originalUrl?.toLowerCase().includes(q) &&
+          !link.destinationUrl?.toLowerCase().includes(q) &&
           !(link.title || '').toLowerCase().includes(q)) return false;
     }
     const expired = link.expiresAt && new Date(link.expiresAt) < now;
@@ -318,6 +359,14 @@ const filteredLinks = computed(() => {
 
 const totalPages = computed(() => Math.max(1, Math.ceil(filteredLinks.value.length / pageSize.value)));
 
+const pageNumbers = computed(() => {
+  const total = totalPages.value;
+  const cur = currentPage.value;
+  const range = [];
+  for (let i = Math.max(1, cur - 2); i <= Math.min(total, cur + 2); i++) range.push(i);
+  return range;
+});
+
 const pagedLinks = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   return filteredLinks.value.slice(start, start + pageSize.value);
@@ -328,7 +377,7 @@ const paginationInfo = computed(() => {
   if (total === 0) return '0 items';
   const start = (currentPage.value - 1) * pageSize.value + 1;
   const end = Math.min(currentPage.value * pageSize.value, total);
-  return `${start}–${end} of ${total}`;
+  return t('common.showing', { start, end, total });
 });
 
 const toggleSort = () => { sortDesc.value = !sortDesc.value; };
@@ -336,22 +385,29 @@ const toggleSort = () => { sortDesc.value = !sortDesc.value; };
 const copyLink = async (code) => {
   await navigator.clipboard.writeText(`${baseShortUrl}/${code}`);
   copied.value = code;
-  toast.success('Link copied to clipboard');
+  toast.success(t('urls.copied'));
   setTimeout(() => { copied.value = null; }, 2000);
 };
 
 const handleDelete = async (id) => {
-  if (!confirm('ต้องการลบ link นี้ใช่หรือไม่?')) return;
+  if (!confirm(t('urls.deleteConfirm'))) return;
   try {
     await store.deleteLink(id);
-    toast.success('Link deleted');
+    toast.success(t('urls.deleted'));
   } catch {
-    toast.error('Failed to delete link');
+    toast.error(t('urls.deleteFailed'));
   }
 };
 
 const formatDate = (d) =>
   new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+
+const getFaviconUrl = (url) => {
+  try {
+    const { hostname } = new URL(url);
+    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+  } catch { return null; }
+};
 
 onMounted(() => store.fetchLinks());
 </script>

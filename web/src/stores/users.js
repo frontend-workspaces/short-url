@@ -4,14 +4,14 @@ import api from '../api';
 export const useUsersStore = defineStore('users', {
   state: () => ({
     users: [],
-    pagination: { total: 0, page: 1, limit: 10, pages: 1 },
+    pagination: { total: 0, page: 1, limit: 5, pages: 1 },
     loading: false,
   }),
   actions: {
-    async fetchUsers({ page = 1, search = '', status = '' } = {}) {
+    async fetchUsers({ page = 1, limit = 5, search = '', status = '' } = {}) {
       this.loading = true;
       try {
-        const { data } = await api.get('/users', { params: { page, limit: 10, search, status } });
+        const { data } = await api.get('/users', { params: { page, limit, search, status } });
         this.users = data.data;
         this.pagination = data.pagination;
       } finally {

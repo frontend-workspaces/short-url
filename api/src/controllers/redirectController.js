@@ -18,7 +18,7 @@ exports.redirect = async (req, res) => {
       referer: req.headers.referer || null,
     });
 
-    res.redirect(link.originalUrl);
+    res.redirect(link.destinationUrl);
   } catch {
     return fail(res, 'SERVER_ERROR');
   }

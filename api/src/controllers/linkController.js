@@ -1,3 +1,5 @@
+const https = require('https');
+const http = require('http');
 const { nanoid } = require('nanoid');
 const Link = require('../models/Link');
 const RedirectLog = require('../models/RedirectLog');
@@ -19,19 +21,23 @@ exports.getLinks = async (req, res) => {
 
 exports.createLink = async (req, res) => {
   try {
-    const { originalUrl, title, code, expiresAt } = req.body;
-    if (!originalUrl) return fail(res, 'LINK_MISSING_URL');
+    const { destinationUrl, code, expiresAt } = req.body;
+    let { title } = req.body;
+    if (!destinationUrl) return fail(res, 'LINK_MISSING_URL');
+    if (!title?.trim()) {
+      title = await fetchPageTitle(destinationUrl);
+    }
     const shortCode = code?.trim() || nanoid(7);
     const link = await Link.create({
       code: shortCode,
-      originalUrl,
+      destinationUrl,
       title,
       expiresAt: expiresAt || null,
       createdBy: req.user.id,
     });
     return ok(res, {
       code: link.code,
-      originalUrl: link.originalUrl,
+      destinationUrl: link.destinationUrl,
       shortUrl: `${BASE_SHORT_URL}/${link.code}`,
       ...(link.title ? { title: link.title } : {}),
     }, 201);
@@ -43,15 +49,18 @@ exports.createLink = async (req, res) => {
 
 exports.updateLink = async (req, res) => {
   try {
-    const { title, originalUrl, isActive, expiresAt } = req.body;
+    const { title, destinationUrl, code, isActive, expiresAt } = req.body;
+    const update = { title, destinationUrl, isActive, expiresAt: expiresAt || null };
+    if (code?.trim()) update.code = code.trim();
     const link = await Link.findByIdAndUpdate(
       req.params.id,
-      { title, originalUrl, isActive, expiresAt: expiresAt || null },
+      update,
       { new: true, runValidators: true }
     );
     if (!link) return fail(res, 'LINK_NOT_FOUND');
     return ok(res, { data: link });
-  } catch {
+  } catch (err) {
+    if (err.code === 11000) return fail(res, 'LINK_CODE_EXISTS');
     return fail(res, 'SERVER_ERROR');
   }
 };
@@ -183,6 +192,71 @@ exports.getAnalytics = async (req, res) => {
   }
 };
 
+exports.getLinkAnalytics = async (req, res) => {
+  try {
+    const link = await Link.findById(req.params.id);
+    if (!link) return fail(res, 'LINK_NOT_FOUND');
+
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const logs = await RedirectLog.find({ link: req.params.id, createdAt: { $gte: sevenDaysAgo } })
+      .sort({ createdAt: -1 }).limit(1000);
+
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      days.push(d.toISOString().split('T')[0]);
+    }
+    const timeline = days.map((date) => ({
+      date,
+      clicks: logs.filter((l) => l.createdAt.toISOString().split('T')[0] === date).length,
+    }));
+
+    const deviceMap = {};
+    logs.forEach((log) => {
+      const device = parseDevice(log.userAgent);
+      deviceMap[device] = (deviceMap[device] || 0) + 1;
+    });
+    const devices = Object.entries(deviceMap).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+
+    const direct = logs.filter((l) => !l.referer).length;
+    const referral = logs.filter((l) => !!l.referer).length;
+
+    const countryMap = {};
+    const cityMap = {};
+    if (geoip) {
+      logs.forEach((log) => {
+        if (log.ip) {
+          const geo = geoip.lookup(log.ip);
+          if (geo?.country) {
+            const cName = COUNTRY_NAMES[geo.country] || geo.country;
+            countryMap[cName] = (countryMap[cName] || 0) + 1;
+            if (geo.city) cityMap[geo.city] = (cityMap[geo.city] || 0) + 1;
+          }
+        }
+      });
+    }
+    const total = Math.max(logs.length, 1);
+    const countries = Object.entries(countryMap)
+      .map(([name, count]) => ({ name, count, percent: Math.round((count / total) * 100) }))
+      .sort((a, b) => b.count - a.count).slice(0, 10);
+    const cities = Object.entries(cityMap)
+      .map(([name, count]) => ({ name, count, percent: Math.round((count / total) * 100) }))
+      .sort((a, b) => b.count - a.count).slice(0, 10);
+
+    return ok(res, {
+      link: { code: link.code, title: link.title, totalClicks: link.clickCount, createdAt: link.createdAt },
+      timeline,
+      devices,
+      trafficType: { direct, qr: 0, referral },
+      locations: { countries, cities },
+    });
+  } catch {
+    return fail(res, 'SERVER_ERROR');
+  }
+};
+
 function parseDevice(userAgent = '') {
   if (!userAgent) return 'Unknown';
   const ua = userAgent.toLowerCase();
@@ -212,3 +286,54 @@ const COUNTRY_NAMES = {
   ES: 'Spain', RU: 'Russia', PL: 'Poland', SE: 'Sweden', NO: 'Norway',
   DK: 'Denmark', FI: 'Finland', CH: 'Switzerland', AT: 'Austria', BE: 'Belgium',
 };
+
+exports.fetchMeta = async (req, res) => {
+  const { url } = req.query;
+  if (!url) return ok(res, { title: '' });
+  try { new URL(url); } catch { return ok(res, { title: '' }); }
+  const title = await fetchPageTitle(url);
+  return ok(res, { title });
+};
+
+function fetchPageTitle(url, maxRedirects = 5) {
+  return new Promise((resolve) => {
+    try {
+      const parsed = new URL(url);
+      const isHttps = parsed.protocol === 'https:';
+      const proto = isHttps ? https : http;
+      const options = {
+        hostname: parsed.hostname,
+        port: parsed.port || (isHttps ? 443 : 80),
+        path: (parsed.pathname || '/') + parsed.search,
+        method: 'GET',
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; LinkBot/1.0)', Accept: 'text/html' },
+        timeout: 8000,
+        rejectUnauthorized: false,
+      };
+      const req = proto.request(options, (response) => {
+        if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location && maxRedirects > 0) {
+          try { fetchPageTitle(new URL(response.headers.location, url).href, maxRedirects - 1).then(resolve); }
+          catch { resolve(''); }
+          return;
+        }
+        let html = '';
+        response.on('data', (chunk) => { html += chunk.toString(); if (html.length > 100000) req.destroy(); });
+        response.on('end', () => {
+          const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+          resolve(match ? decodeHtmlEntities(match[1].trim().replace(/\s+/g, ' ')) : '');
+        });
+        response.on('error', () => resolve(''));
+      });
+      req.on('error', () => resolve(''));
+      req.on('timeout', () => { req.destroy(); resolve(''); });
+      req.end();
+    } catch { resolve(''); }
+  });
+}
+
+function decodeHtmlEntities(str) {
+  return str
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#039;/g, "'")
+    .replace(/&#(\d+);/g, (_, c) => String.fromCharCode(Number(c)));
+}

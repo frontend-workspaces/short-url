@@ -7,7 +7,8 @@
     <div class="blob blob-3 absolute w-[400px] h-[400px] rounded-full blur-3xl pointer-events-none bg-cyan-300/15 dark:bg-cyan-500/5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
     <!-- Theme toggle -->
-    <div class="absolute top-5 right-5 z-10">
+    <div class="absolute top-5 right-5 z-10 flex items-center gap-2">
+      <LanguageSwitcher />
       <ThemeToggle />
     </div>
 
@@ -27,7 +28,7 @@
             </svg>
           </div>
           <h1 class="title-enter text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Blly.to</h1>
-          <p class="subtitle-enter text-sm text-gray-500 dark:text-slate-400 mt-1.5">จัดการ Short Link ของคุณได้ในที่เดียว</p>
+          <p class="subtitle-enter text-sm text-gray-500 dark:text-slate-400 mt-1.5">{{ $t('auth.loginSubtitle') }}</p>
         </div>
 
         <!-- Gradient divider -->
@@ -39,7 +40,7 @@
 
             <!-- Email -->
             <div>
-              <label class="block text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wide mb-2">Email</label>
+              <label class="block text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wide mb-2">{{ $t('auth.email') }}</label>
               <div class="relative group">
                 <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500 transition-colors duration-200 group-focus-within:text-blue-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -57,7 +58,7 @@
 
             <!-- Password -->
             <div>
-              <label class="block text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wide mb-2">Password</label>
+              <label class="block text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wide mb-2">{{ $t('auth.password') }}</label>
               <div class="relative group">
                 <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500 transition-colors duration-200 group-focus-within:text-blue-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -115,7 +116,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              <span>{{ loading ? 'กำลังดำเนินการ...' : 'เข้าสู่ระบบ' }}</span>
+              <span>{{ loading ? $t('auth.submitting') : $t('auth.login') }}</span>
             </button>
 
           </form>
@@ -133,10 +134,13 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
 import ThemeToggle from '../components/ThemeToggle.vue';
+import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 
 const router = useRouter();
+const { t } = useI18n();
 const auth = useAuthStore();
 
 const email = ref('');
@@ -153,7 +157,7 @@ const handleSubmit = async () => {
     await auth.fetchMe();
     router.push('/');
   } catch (e) {
-    error.value = e.response?.data?.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+    error.value = e.response?.data?.message || t('auth.errorDefault');
   } finally {
     loading.value = false;
   }

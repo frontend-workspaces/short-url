@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{vue,js}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'Noto Sans Thai', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
       animation: {
         'fade-in': 'fadeIn 0.4s ease-out both',
         'slide-up': 'slideUp 0.4s ease-out both',

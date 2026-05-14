@@ -4,8 +4,8 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">User Management</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-slate-500">{{ store.pagination.total }} users total</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">{{ $t('users.title') }}</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-slate-500">{{ $t('users.total', { n: store.pagination.total }) }}</p>
       </div>
       <button
         @click="openModal()"
@@ -14,7 +14,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
         </svg>
-        Add User
+        {{ $t('users.addBtn') }}
       </button>
     </div>
 
@@ -31,7 +31,7 @@
             v-model="search"
             @input="onFilterChange"
             type="text"
-            placeholder="Search by name or email..."
+            :placeholder="$t('users.searchPlaceholder')"
             class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
         </div>
@@ -40,13 +40,13 @@
             v-model="statusFilter"
             @change="onFilterChange"
             :options="[
-              { value: '',                      label: 'All Statuses' },
-              { value: 'active',                label: 'Active',               dot: 'bg-emerald-500' },
-              { value: 'inactive',              label: 'Inactive',             dot: 'bg-gray-400' },
-              { value: 'suspended',             label: 'Suspended',            dot: 'bg-red-500' },
-              { value: 'pending_verification',  label: 'Pending Verification', dot: 'bg-amber-500' },
+              { value: '',                      label: $t('common.allStatuses') },
+              { value: 'active',                label: $t('common.active'),               dot: 'bg-emerald-500' },
+              { value: 'inactive',              label: $t('common.inactive'),             dot: 'bg-gray-400' },
+              { value: 'suspended',             label: $t('common.suspended'),            dot: 'bg-red-500' },
+              { value: 'pending_verification',  label: $t('common.pendingVerification'), dot: 'bg-amber-500' },
             ]"
-            placeholder="All Statuses"
+            :placeholder="$t('common.allStatuses')"
           />
         </div>
       </div>
@@ -58,7 +58,7 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          <span class="text-sm">Loading...</span>
+          <span class="text-sm">{{ $t('common.loading') }}</span>
         </div>
 
         <!-- Empty -->
@@ -68,20 +68,20 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </div>
-          <p class="font-semibold text-gray-700 dark:text-slate-300">No users found</p>
-          <p class="text-sm text-gray-400 dark:text-slate-600">Try adjusting your search or filters</p>
+          <p class="font-semibold text-gray-700 dark:text-slate-300">{{ $t('users.noUsers') }}</p>
+          <p class="text-sm text-gray-400 dark:text-slate-600">{{ $t('users.noUsersHint') }}</p>
         </div>
 
         <!-- Table -->
         <table v-else class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50">
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">User</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">Account Type</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">Roles</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">Status</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">Created</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">Actions</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('users.userCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('users.accountTypeCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('users.rolesCol') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('common.status') }}</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('users.createdCol') }}</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-500 uppercase tracking-wide">{{ $t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50 dark:divide-slate-800">
@@ -136,7 +136,7 @@
                   <button
                     @click="openModal(user)"
                     class="p-1.5 rounded-lg text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                    title="Edit"
+                    :title="$t('common.edit')"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -146,7 +146,7 @@
                   <button
                     @click="confirmDelete(user)"
                     class="p-1.5 rounded-lg text-gray-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                    title="Delete"
+                    :title="$t('common.delete')"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -161,11 +161,10 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="store.pagination.pages > 1" class="flex items-center justify-between px-5 py-4 border-t border-gray-100 dark:border-slate-800">
-        <p class="text-xs text-gray-500 dark:text-slate-500">
-          Showing {{ (store.pagination.page - 1) * store.pagination.limit + 1 }}–{{ Math.min(store.pagination.page * store.pagination.limit, store.pagination.total) }}
-          of {{ store.pagination.total }}
-        </p>
+      <div v-if="store.pagination.total > 0" class="flex items-center justify-between px-5 py-3 border-t border-gray-100 dark:border-slate-800 gap-4">
+        <span class="text-sm font-medium text-gray-600 dark:text-slate-400 shrink-0">
+          {{ $t('users.total', { n: store.pagination.total }) }}
+        </span>
         <div class="flex items-center gap-1">
           <button
             @click="goPage(store.pagination.page - 1)"
@@ -182,8 +181,8 @@
             @click="goPage(p)"
             class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-colors"
             :class="p === store.pagination.page
-              ? 'bg-blue-600 text-white'
-              : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'"
+              ? 'bg-indigo-100 dark:bg-blue-900/40 text-indigo-600 dark:text-blue-400 font-semibold'
+              : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 border border-gray-200 dark:border-slate-700'"
           >{{ p }}</button>
           <button
             @click="goPage(store.pagination.page + 1)"
@@ -194,6 +193,17 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </button>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-sm text-gray-500 dark:text-slate-500">{{ $t('common.showPerPage') }}</span>
+          <div class="w-20">
+            <AppSelect
+              v-model="perPage"
+              @change="goPage(1)"
+              :options="[{ value: 5, label: '5' }, { value: 10, label: '10' }, { value: 25, label: '25' }]"
+              trigger-class="!py-1.5 !text-sm !px-2.5"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -214,9 +224,9 @@
             enter-from-class="opacity-0 scale-95"
             enter-to-class="opacity-100 scale-100"
           >
-            <div v-if="showModal" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+            <div v-if="showModal" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700">
               <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-700">
-                <h3 class="text-base font-bold text-gray-900 dark:text-slate-100">{{ editTarget ? 'Edit User' : 'Add User' }}</h3>
+                <h3 class="text-base font-bold text-gray-900 dark:text-slate-100">{{ editTarget ? $t('users.editTitle') : $t('users.addTitle') }}</h3>
                 <button @click="showModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -227,25 +237,25 @@
               <form @submit.prevent="handleSubmit" class="px-6 py-5 space-y-4">
                 <!-- Full Name -->
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">Full Name</label>
-                  <input v-model="form.fullName" type="text" placeholder="John Doe"
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">{{ $t('users.fullName') }}</label>
+                  <input v-model="form.fullName" type="text" :placeholder="$t('users.fullNamePlaceholder')"
                     class="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
                 </div>
                 <!-- Email -->
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">Email <span class="text-red-500">*</span></label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">{{ $t('auth.email') }} <span class="text-red-500">*</span></label>
                   <input v-model="form.email" type="email" required placeholder="user@example.com"
                     class="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
                 </div>
                 <!-- Password (add only) -->
                 <div v-if="!editTarget">
-                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">Password <span class="text-red-500">*</span></label>
-                  <input v-model="form.password" type="password" required placeholder="Min. 6 characters"
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">{{ $t('users.password') }} <span class="text-red-500">*</span></label>
+                  <input v-model="form.password" type="password" required :placeholder="$t('users.passwordHint')"
                     class="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
                 </div>
                 <!-- Roles -->
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">Roles</label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">{{ $t('users.roles') }}</label>
                   <div class="flex flex-wrap gap-2 p-3 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 min-h-[44px]">
                     <label v-for="role in rolesStore.roles" :key="role._id"
                       class="flex items-center gap-1.5 cursor-pointer select-none">
@@ -257,32 +267,32 @@
                         {{ role.name }}
                       </span>
                     </label>
-                    <span v-if="!rolesStore.roles.length" class="text-xs text-gray-400 dark:text-slate-500">No roles defined yet</span>
+                    <span v-if="!rolesStore.roles.length" class="text-xs text-gray-400 dark:text-slate-500">{{ $t('users.noRoles') }}</span>
                   </div>
                 </div>
 
                 <!-- Account Type + Status -->
                 <div class="grid grid-cols-2 gap-3">
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">Account Type</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">{{ $t('users.accountType') }}</label>
                     <AppSelect
                       v-model="form.accountType"
                       :options="[
-                        { value: 'free',       label: 'Free',       dot: 'bg-gray-400' },
-                        { value: 'premium',    label: 'Premium',    dot: 'bg-blue-500' },
-                        { value: 'enterprise', label: 'Enterprise', dot: 'bg-violet-500' },
+                        { value: 'free',       label: $t('common.free'),       dot: 'bg-gray-400' },
+                        { value: 'premium',    label: $t('common.premium'),    dot: 'bg-blue-500' },
+                        { value: 'enterprise', label: $t('common.enterprise'), dot: 'bg-violet-500' },
                       ]"
                     />
                   </div>
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">Status</label>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-1.5">{{ $t('common.status') }}</label>
                     <AppSelect
                       v-model="form.status"
                       :options="[
-                        { value: 'active',               label: 'Active',    dot: 'bg-emerald-500' },
-                        { value: 'inactive',             label: 'Inactive',  dot: 'bg-gray-400' },
-                        { value: 'suspended',            label: 'Suspended', dot: 'bg-red-500' },
-                        { value: 'pending_verification', label: 'Pending',   dot: 'bg-amber-500' },
+                        { value: 'active',               label: $t('common.active'),    dot: 'bg-emerald-500' },
+                        { value: 'inactive',             label: $t('common.inactive'),  dot: 'bg-gray-400' },
+                        { value: 'suspended',            label: $t('common.suspended'), dot: 'bg-red-500' },
+                        { value: 'pending_verification', label: $t('common.pending'),   dot: 'bg-amber-500' },
                       ]"
                     />
                   </div>
@@ -299,7 +309,7 @@
                 <div class="flex gap-3 pt-1">
                   <button type="button" @click="showModal = false"
                     class="flex-1 py-3.5 rounded-2xl border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-200">
-                    Cancel
+                    {{ $t('common.cancel') }}
                   </button>
                   <button type="submit" :disabled="submitting"
                     class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white text-sm font-bold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2">
@@ -307,7 +317,7 @@
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    {{ editTarget ? 'Save Changes' : 'Create User' }}
+                    {{ editTarget ? $t('common.saveChanges') : $t('users.addTitle') }}
                   </button>
                 </div>
               </form>
@@ -330,15 +340,15 @@
               </svg>
             </div>
             <div class="text-center">
-              <h3 class="text-base font-bold text-gray-900 dark:text-slate-100">Delete User</h3>
+              <h3 class="text-base font-bold text-gray-900 dark:text-slate-100">{{ $t('users.deleteTitle') }}</h3>
               <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">
-                Are you sure you want to delete <span class="font-semibold text-gray-700 dark:text-slate-300">{{ deleteTarget.fullName || deleteTarget.email }}</span>? This action cannot be undone.
+                {{ $t('users.deleteConfirm', { name: deleteTarget.fullName || deleteTarget.email }) }}
               </p>
             </div>
             <div class="flex gap-3">
               <button @click="deleteTarget = null"
                 class="flex-1 py-3.5 rounded-2xl border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-200">
-                Cancel
+                {{ $t('common.cancel') }}
               </button>
               <button @click="handleDelete" :disabled="deleting"
                 class="flex-1 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2">
@@ -346,7 +356,7 @@
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Delete
+                {{ $t('common.delete') }}
               </button>
             </div>
           </div>
@@ -359,29 +369,32 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useUsersStore } from '../stores/users';
 import { useRolesStore } from '../stores/roles';
 import { useToast } from '../composables/useToast';
 import AppSelect from '../components/AppSelect.vue';
 
+const { t } = useI18n();
 const store = useUsersStore();
 const rolesStore = useRolesStore();
 const toast = useToast();
 
 const search = ref('');
 const statusFilter = ref('');
+const perPage = ref(5);
 let searchTimer;
 
 const onFilterChange = () => {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => {
-    store.fetchUsers({ page: 1, search: search.value, status: statusFilter.value });
+    store.fetchUsers({ page: 1, limit: perPage.value, search: search.value, status: statusFilter.value });
   }, 300);
 };
 
 const goPage = (p) => {
   if (p < 1 || p > store.pagination.pages) return;
-  store.fetchUsers({ page: p, search: search.value, status: statusFilter.value });
+  store.fetchUsers({ page: p, limit: perPage.value, search: search.value, status: statusFilter.value });
 };
 
 const pageNumbers = computed(() => {
@@ -427,11 +440,11 @@ const handleSubmit = async () => {
         status: form.value.status,
         roles: form.value.roles,
       });
-      toast.success('User updated successfully');
+      toast.success(t('users.updated'));
     } else {
       await store.createUser(form.value);
       await store.fetchUsers({ page: 1, search: search.value, status: statusFilter.value });
-      toast.success('User created successfully');
+      toast.success(t('users.created'));
     }
     showModal.value = false;
   } catch (e) {
@@ -451,10 +464,10 @@ const handleDelete = async () => {
   deleting.value = true;
   try {
     await store.deleteUser(deleteTarget.value.id);
-    toast.success('User deleted');
+    toast.success(t('users.deleted'));
     deleteTarget.value = null;
   } catch {
-    toast.error('Failed to delete user');
+    toast.error(t('users.deleteFailed'));
   } finally {
     deleting.value = false;
   }
@@ -483,7 +496,12 @@ const statusClass = (s) => ({
   pending_verification: 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400',
 }[s] ?? '');
 
-const statusLabel = (s) => ({ active: 'Active', inactive: 'Inactive', suspended: 'Suspended', pending_verification: 'Pending' }[s] ?? s);
+const statusLabel = (s) => ({
+  active: t('common.active'),
+  inactive: t('common.inactive'),
+  suspended: t('common.suspended'),
+  pending_verification: t('common.pending'),
+}[s] ?? s);
 
 const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 

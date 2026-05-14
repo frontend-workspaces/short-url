@@ -109,7 +109,7 @@ const ERRORS = {
   // ─── Link ──────────────────────────────────────────────────────────────────
   LINK_MISSING_URL: {
     code: 'LINK_MISSING_URL',
-    message: 'originalUrl is required',
+    message: 'destinationUrl is required',
     status: 400,
   },
   LINK_CODE_EXISTS: {

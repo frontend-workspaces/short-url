@@ -15,7 +15,7 @@
             </svg>
           </div>
           <div>
-            <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">Redirect Logs</h2>
+            <h2 class="text-base font-bold text-gray-900 dark:text-slate-100">{{ $t('logModal.title') }}</h2>
             <p class="text-xs text-gray-400 dark:text-slate-500 font-mono mt-0.5">{{ baseShortUrl }}/{{ link.code }}</p>
           </div>
         </div>
@@ -37,7 +37,7 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          <span class="text-sm font-medium">กำลังโหลด logs...</span>
+          <span class="text-sm font-medium">{{ $t('logModal.loading') }}</span>
         </div>
 
         <!-- Empty -->
@@ -48,8 +48,8 @@
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0" />
             </svg>
           </div>
-          <p class="text-gray-800 dark:text-slate-200 font-bold">ยังไม่มี log</p>
-          <p class="text-sm text-gray-500 dark:text-slate-500">จะบันทึกทุกครั้งที่มีคนคลิก link นี้</p>
+          <p class="text-gray-800 dark:text-slate-200 font-bold">{{ $t('logModal.noLogs') }}</p>
+          <p class="text-sm text-gray-500 dark:text-slate-500">{{ $t('logModal.noLogsHint') }}</p>
         </div>
 
         <!-- Log list -->
@@ -96,7 +96,7 @@
         class="flex items-center justify-between px-6 py-3.5 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/40 shrink-0 rounded-b-2xl"
       >
         <p class="text-sm text-gray-500 dark:text-slate-500">
-          แสดง <span class="font-bold text-gray-800 dark:text-slate-300">{{ logs.length }}</span> รายการล่าสุด
+          {{ $t('logModal.showingLatest', { n: logs.length }) }}
         </p>
 
         <!-- Pagination -->
