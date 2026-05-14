@@ -63,9 +63,11 @@
       </div>
 
       <!-- Generate / Regenerate -->
+      <div v-if="loading" class="w-full h-11 rounded-xl bg-gray-100 dark:bg-slate-800 animate-pulse" />
       <button
+        v-else
         @click="handleRegenerate"
-        :disabled="loading || regenerating"
+        :disabled="regenerating"
         :class="auth.apiKey
           ? 'border-2 border-blue-500 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
           : 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-sm shadow-emerald-500/25'"
@@ -94,7 +96,7 @@ import { useToast } from '../composables/useToast';
 const auth = useAuthStore();
 const toast = useToast();
 
-const loading = ref(false);
+const loading = ref(true);
 const regenerating = ref(false);
 const showKey = ref(false);
 const copied = ref(false);
@@ -124,7 +126,6 @@ const handleRegenerate = async () => {
 };
 
 onMounted(async () => {
-  loading.value = true;
   try {
     await auth.fetchApiKey();
   } finally {

@@ -14,16 +14,35 @@ const buildPermissions = (roles = []) => {
   return perms;
 };
 
+const loadCache = (key) => {
+  try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
+};
+
+const saveCache = (user, permissions) => {
+  localStorage.setItem('auth_user', JSON.stringify(user));
+  localStorage.setItem('auth_permissions', JSON.stringify(permissions));
+};
+
+const clearCache = () => {
+  localStorage.removeItem('auth_user');
+  localStorage.removeItem('auth_permissions');
+};
+
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    token: localStorage.getItem('token') || null,
-    user: null,
-    permissions: null,
-    apiKeyId: null,
-    apiKey: null,
-    apiKeyStatus: null,
-    apiKeyExpiresAt: null,
-  }),
+  state: () => {
+    const user = loadCache('auth_user');
+    const permissions = loadCache('auth_permissions');
+    return {
+      token: localStorage.getItem('token') || null,
+      user,
+      permissions,
+      authReady: !!(user && permissions),
+      apiKeyId: null,
+      apiKey: null,
+      apiKeyStatus: null,
+      apiKeyExpiresAt: null,
+    };
+  },
   actions: {
     async login(email, password) {
       const { data } = await api.post('/auth/login', { email, password });
@@ -41,10 +60,13 @@ export const useAuthStore = defineStore('auth', {
       const { data } = await api.get('/auth/me');
       this.user = data.user;
       this.permissions = buildPermissions(data.user?.roles || []);
+      this.authReady = true;
+      saveCache(this.user, this.permissions);
     },
     async updateProfile(fullName) {
       const { data } = await api.put('/auth/profile', { fullName });
       this.user = data.user;
+      saveCache(this.user, this.permissions);
       return data.user;
     },
     async changePassword(currentPassword, newPassword) {
@@ -68,11 +90,13 @@ export const useAuthStore = defineStore('auth', {
       this.token = null;
       this.user = null;
       this.permissions = null;
+      this.authReady = false;
       this.apiKeyId = null;
       this.apiKey = null;
       this.apiKeyStatus = null;
       this.apiKeyExpiresAt = null;
       localStorage.removeItem('token');
+      clearCache();
     },
   },
 });

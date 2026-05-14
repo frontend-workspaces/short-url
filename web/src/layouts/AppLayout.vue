@@ -44,61 +44,79 @@
 
       <!-- Navigation -->
       <nav class="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
-        <template v-for="item in visibleNavItems">
 
-          <!-- Section label -->
-          <div v-if="item.section" :key="'s-' + item.section" class="px-3 pt-4 pb-1.5">
-            <p class="text-[10px] font-bold text-gray-400 dark:text-slate-600 uppercase tracking-[0.1em]">{{ item.section }}</p>
+        <!-- Skeleton while auth loading -->
+        <template v-if="!auth.authReady">
+          <div v-for="i in 4" :key="i" class="flex items-center gap-3 px-3.5 py-3 rounded-xl">
+            <div class="w-[18px] h-[18px] rounded-md bg-gray-200 dark:bg-slate-700/60 animate-pulse shrink-0" />
+            <div class="h-3 rounded-full bg-gray-200 dark:bg-slate-700/60 animate-pulse" :style="`width: ${[60, 45, 72, 55][i-1]}%`" />
           </div>
-
-          <!-- Nav link -->
-          <router-link
-            v-else
-            :key="item.path"
-            :to="item.path"
-            @click="ui.sidebarOpen = false"
-            class="group relative flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm transition-all duration-200 overflow-hidden"
-            :class="$route.path === item.path
-              ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold'
-              : 'text-gray-500 dark:text-slate-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800/80 hover:text-gray-900 dark:hover:text-white'"
-          >
-            <!-- Active left bar -->
-            <Transition
-              enter-active-class="transition-all duration-300 ease-out"
-              enter-from-class="opacity-0 -translate-x-2"
-              enter-to-class="opacity-100 translate-x-0"
-              leave-active-class="transition-all duration-200 ease-in"
-              leave-from-class="opacity-100 translate-x-0"
-              leave-to-class="opacity-0 -translate-x-2"
-            >
-              <span
-                v-if="$route.path === item.path"
-                class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-blue-500 rounded-r-full"
-              />
-            </Transition>
-
-            <!-- Icon -->
-            <svg
-              class="shrink-0 transition-all duration-200"
-              :class="[
-                $route.path === item.path
-                  ? 'text-blue-500 dark:text-blue-400 w-[19px] h-[19px]'
-                  : 'text-gray-400 dark:text-slate-500 group-hover:text-gray-600 dark:group-hover:text-slate-300 w-[18px] h-[18px]',
-              ]"
-              fill="none" stroke="currentColor" viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.iconD" />
-            </svg>
-
-            <span class="truncate">{{ item.label }}</span>
-
-            <!-- Active dot accent -->
-            <span
-              v-if="$route.path === item.path"
-              class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 shrink-0"
-            />
-          </router-link>
         </template>
+
+        <!-- Real nav -->
+        <Transition
+          enter-active-class="transition-opacity duration-300"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+        >
+          <div v-if="auth.authReady" class="space-y-0.5">
+            <template v-for="item in visibleNavItems">
+
+              <!-- Section label -->
+              <div v-if="item.section" :key="'s-' + item.section" class="px-3 pt-4 pb-1.5">
+                <p class="text-[10px] font-bold text-gray-400 dark:text-slate-600 uppercase tracking-[0.1em]">{{ item.section }}</p>
+              </div>
+
+              <!-- Nav link -->
+              <router-link
+                v-else
+                :key="item.path"
+                :to="item.path"
+                @click="ui.sidebarOpen = false"
+                class="group relative flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm transition-all duration-200 overflow-hidden"
+                :class="$route.path === item.path
+                  ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'text-gray-500 dark:text-slate-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800/80 hover:text-gray-900 dark:hover:text-white'"
+              >
+                <!-- Active left bar -->
+                <Transition
+                  enter-active-class="transition-all duration-300 ease-out"
+                  enter-from-class="opacity-0 -translate-x-2"
+                  enter-to-class="opacity-100 translate-x-0"
+                  leave-active-class="transition-all duration-200 ease-in"
+                  leave-from-class="opacity-100 translate-x-0"
+                  leave-to-class="opacity-0 -translate-x-2"
+                >
+                  <span
+                    v-if="$route.path === item.path"
+                    class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-blue-500 rounded-r-full"
+                  />
+                </Transition>
+
+                <!-- Icon -->
+                <svg
+                  class="shrink-0 transition-all duration-200"
+                  :class="[
+                    $route.path === item.path
+                      ? 'text-blue-500 dark:text-blue-400 w-[19px] h-[19px]'
+                      : 'text-gray-400 dark:text-slate-500 group-hover:text-gray-600 dark:group-hover:text-slate-300 w-[18px] h-[18px]',
+                  ]"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.iconD" />
+                </svg>
+
+                <span class="truncate">{{ item.label }}</span>
+
+                <!-- Active dot accent -->
+                <span
+                  v-if="$route.path === item.path"
+                  class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 shrink-0"
+                />
+              </router-link>
+            </template>
+          </div>
+        </Transition>
       </nav>
 
       <!-- Bottom divider -->
@@ -263,6 +281,8 @@ onMounted(async () => {
   initTheme();
   if (auth.token && !auth.user) {
     await auth.fetchMe();
+  } else if (!auth.token) {
+    auth.authReady = true;
   }
   // Redirect if current route has no view permission
   const requiredPerm = ROUTE_PERMISSION[router.currentRoute.value.path];
