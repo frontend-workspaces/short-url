@@ -24,17 +24,13 @@
       <div class="px-6 pb-6 flex gap-3">
         <button
           @click="$emit('cancel')"
-          class="flex-1 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-semibold
-                 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800
-                 transition-all duration-150"
+          class="flex-1 py-3.5 rounded-2xl border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-200"
         >
           ยกเลิก
         </button>
         <button
           @click="$emit('confirm')"
-          class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold
-                 transition-all duration-150 shadow-lg shadow-red-500/25 hover:shadow-red-500/40
-                 hover:-translate-y-0.5 active:translate-y-0"
+          class="flex-1 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 transition-all duration-200"
         >
           ออกจากระบบ
         </button>

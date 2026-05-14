@@ -44,16 +44,16 @@
 
       <!-- Navigation -->
       <nav class="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
-        <template v-for="item in navItems">
+        <template v-for="item in visibleNavItems">
 
           <!-- Section label -->
-          <div v-if="item.section" :key="'s-' + item.section" class="px-3 pt-4 pb-1.5 first:pt-1">
+          <div v-if="item.section" :key="'s-' + item.section" class="px-3 pt-4 pb-1.5">
             <p class="text-[10px] font-bold text-gray-400 dark:text-slate-600 uppercase tracking-[0.1em]">{{ item.section }}</p>
           </div>
 
           <!-- Nav link -->
           <router-link
-            v-else-if="can(item.permission)"
+            v-else
             :key="item.path"
             :to="item.path"
             @click="ui.sidebarOpen = false"
@@ -217,9 +217,23 @@ const navItems = [
   { path: '/roles',              label: 'Roles',       permission: 'roles',    iconD: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
   { path: '/api-key-management', label: 'API Keys',    permission: 'api_keys', iconD: 'M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18' },
   { section: 'Account' },
-  { path: '/api-key',   label: 'My API Key', permission: 'api_key', iconD: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z' },
+  { path: '/api-key',   label: 'API Key',    permission: 'api_key', iconD: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z' },
   { path: '/docs',      label: 'Docs',       permission: 'docs',    iconD: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
 ];
+
+const visibleNavItems = computed(() => {
+  const result = [];
+  let pendingSection = null;
+  for (const item of navItems) {
+    if (item.section) {
+      pendingSection = item;
+    } else if (can(item.permission)) {
+      if (pendingSection) { result.push(pendingSection); pendingSection = null; }
+      result.push(item);
+    }
+  }
+  return result;
+});
 
 const displayName = computed(() => {
   if (auth.user?.fullName) return auth.user.fullName;

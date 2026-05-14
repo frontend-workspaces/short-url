@@ -137,17 +137,14 @@
           <button
             type="button"
             @click="$emit('close')"
-            class="flex-1 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl text-sm font-semibold
-                   text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-150"
+            class="flex-1 py-3.5 rounded-2xl border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-200"
           >
             ยกเลิก
           </button>
           <button
             type="submit"
             :disabled="loading"
-            class="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-bold
-                   hover:from-blue-700 hover:to-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed
-                   transition-all duration-200 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2"
+            class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white text-sm font-bold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
           >
             <svg v-if="loading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />

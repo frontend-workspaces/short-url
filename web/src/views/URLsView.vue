@@ -6,12 +6,12 @@
       <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">URLs</h1>
       <button
         @click="ui.openCreate()"
-        class="flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors shadow-sm"
+        class="shorten-btn flex items-center gap-2 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white px-4 py-2.5 rounded-2xl text-sm font-bold transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-px active:translate-y-0 active:shadow-md"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-90 shorten-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
         </svg>
-        Shorten new URL
+        Shorten URL
       </button>
     </div>
 
@@ -355,3 +355,33 @@ const formatDate = (d) =>
 
 onMounted(() => store.fetchLinks());
 </script>
+
+<style scoped>
+.shorten-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.shorten-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: none;
+  pointer-events: none;
+}
+
+.shorten-btn:hover::after {
+  left: 140%;
+  transition: left 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>
